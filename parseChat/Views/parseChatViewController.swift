@@ -8,11 +8,13 @@
 
 import UIKit
 import Parse
+import MBProgressHUD
 
 class parseChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var messageTextField: UITextField!
     @IBOutlet weak var tableView: UITableView!
+    var refreshControl: UIRefreshControl!
     var messages: [PFObject] = []
     
     override func viewDidLoad() {
@@ -22,6 +24,10 @@ class parseChatViewController: UIViewController, UITableViewDelegate, UITableVie
             print("Welcome back \(currentUser.username!) :)")
             self.callAlertDismiss(title: "Welcome", message: "Welcome back \(currentUser.username!)")
         }
+        
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(updateMessages), for: .valueChanged)
+        tableView.insertSubview(refreshControl, at: 0)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -77,7 +83,7 @@ class parseChatViewController: UIViewController, UITableViewDelegate, UITableVie
     }
 
     
-    private func updateMessages() {
+    @objc private func updateMessages() {
         let query = PFQuery(className:"Message")
         query.order(byDescending: "createdAt")
         query.includeKey("user")
@@ -85,6 +91,7 @@ class parseChatViewController: UIViewController, UITableViewDelegate, UITableVie
             if let objects = objects {
                 self.messages = objects
                 self.tableView.reloadData()
+                self.refreshControl.endRefreshing()
             } else {
                 print(error?.localizedDescription ?? "")
             }

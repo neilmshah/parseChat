@@ -8,6 +8,7 @@
 
 import UIKit
 import Parse
+import MBProgressHUD
 
 class LoginViewController: UIViewController {
 
@@ -27,6 +28,7 @@ class LoginViewController: UIViewController {
             self.callAlertDismiss(title: title, message: message)
         }
         else {
+            MBProgressHUD.showAdded(to: self.view, animated: true)
             newUser.username = userNameTextField.text
             newUser.password = passwordTextField.text
         
@@ -36,9 +38,11 @@ class LoginViewController: UIViewController {
                     print(error.localizedDescription)
                     let title = "Error in Signup"
                     let message = error.localizedDescription
+                    MBProgressHUD.hide(for: self.view, animated: true)
                     self.callAlertDismiss(title: title, message: message)
                 } else {
                     print("User Registered successfully")
+                    MBProgressHUD.hide(for: self.view, animated: true)
                     self.performSegue(withIdentifier: "loginSegue", sender: nil)
                 }
             }
@@ -52,6 +56,7 @@ class LoginViewController: UIViewController {
             self.callAlertDismiss(title: title, message: message)
         }
         else {
+            MBProgressHUD.showAdded(to: self.view, animated: true)
             let username = userNameTextField.text
             let password = passwordTextField.text
             
@@ -60,9 +65,11 @@ class LoginViewController: UIViewController {
                     print("User log in failed: \(error.localizedDescription)")
                     let title = "User Login Failed"
                     let message = error.localizedDescription
+                    MBProgressHUD.hide(for: self.view, animated: true)
                     self.callAlertDismiss(title: title, message: message)
                 } else {
                     print("User logged in successfully")
+                    MBProgressHUD.hide(for: self.view, animated: true)
                     self.performSegue(withIdentifier: "loginSegue", sender: nil)
                 }
             }
